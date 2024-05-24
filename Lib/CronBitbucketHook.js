@@ -103,6 +103,7 @@ Cron.prototype.dbCheck = function(next) {
 
   Model.BitbucketHook
     .where('fullname', this.deployment.fullname)
+    .where('commitBranch', this.deployment.branch)
     .where('status', Model.BitbucketHook.STATUS_PENDING)
     .order('id DESC')
     .one((error, hook) => {
