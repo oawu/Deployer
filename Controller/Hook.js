@@ -10,11 +10,11 @@ const moment     = require('moment')
 
 const Queue      = require('@oawu/queue')
 const { Model }  = require('@oawu/mysql-orm')
+const Dog        = require('@oawu/dog')
 
 const Helper     = require('@oawu/_Helper')
 const Path       = require('@oawu/_Path')
 const Config     = require('@oawu/_Config')
-const Dog        = require('@oawu/_Dog')
 
 
 module.exports = {

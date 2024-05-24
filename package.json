@@ -5,11 +5,11 @@
   },
   "dependencies": {
     "@oawu/_Config": "file:Config.js",
-    "@oawu/_Dog": "file:Core/Dog.js",
     "@oawu/_Helper": "file:Core/Helper.js",
     "@oawu/_Init": "file:Core/Init.js",
     "@oawu/_Path": "file:Core/Path.js",
     "@oawu/_Route": "file:Core/Route.js",
+    "@oawu/dog": "^1.0.1",
     "@oawu/mysql-orm": "^1.0.8",
     "@oawu/queue": "^1.0.11",
     "axios": "^1.4.0",

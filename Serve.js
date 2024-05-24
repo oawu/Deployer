@@ -6,9 +6,10 @@
  */
  
 const Queue  = require('@oawu/queue')
+const Dog    = require('@oawu/dog')
+
 const Path   = require('@oawu/_Path')
 const Config = require('@oawu/_Config')
-const Dog    = require('@oawu/_Dog')
 const Helper = require('@oawu/_Helper')
 
 

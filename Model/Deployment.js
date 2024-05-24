@@ -5,7 +5,7 @@
  * @link        https://www.ioa.tw/
  */
 
-const Dog = require('@oawu/_Dog')
+const Dog       = require('@oawu/dog')
 const { Model } = require('@oawu/mysql-orm')
 
 const Deployment = function() {}

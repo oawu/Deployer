@@ -6,11 +6,14 @@
  */
 
 const Hashids   = require('hashids/cjs')
+
 const { Model } = require('@oawu/mysql-orm')
+const Dog       = require('@oawu/dog')
+
 const Path      = require('@oawu/_Path')
 const Config    = require('@oawu/_Config')
 const Helper    = require('@oawu/_Helper')
-const Dog       = require('@oawu/_Dog')
+
 const HookEvent = require(`${Path.lib}HookEvent`)
 
 const hashids   = new Hashids(typeof Config.salt == 'string' ? Config.salt : '', 10, 'abcdefhijkmnprstuvwxyz2345678')

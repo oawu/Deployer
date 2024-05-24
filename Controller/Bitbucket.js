@@ -7,8 +7,9 @@
 
 const moment    = require('moment')
 const Queue     = require('@oawu/queue')
+const Dog       = require('@oawu/dog')
+
 const Helper    = require('@oawu/_Helper')
-const Dog       = require('@oawu/_Dog')
 const { Model } = require('@oawu/mysql-orm')
 const Path      = require('@oawu/_Path')
 const HookEvent = require(`${Path.lib}HookEvent`)
