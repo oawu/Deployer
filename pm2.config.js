@@ -8,7 +8,7 @@
 module.exports = {
   apps : [
     {
-      name: 'deploy',
+      name: 'deployer',
 
       max_memory_restart: '512M',
 
