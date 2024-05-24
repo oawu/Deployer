@@ -6,7 +6,8 @@
 * DB 新增 Deployment 功能
 
 ## 啟動
-* 使用 PM2 來啟動，`pm2 start pm2.config.js --only deploy`
+* 使用 PM2 來啟動，`pm2 start pm2.config.js --only deployer`
+* 注意！DB 如有新增 Deployment 的話，記得重開 PM2，可執行 `pm2 restart deployer`
 
 ## 其他
 * 列出 `pm2 list`
