@@ -1,0 +1,19 @@
+# OA's Deployer 工具
+
+---
+
+0. clone
+1. npm i
+2. 設定 Config.js
+3. DB 新增 Deployment 功能
+
+## 啟動
+* 使用 PM2 來啟動，`pm2 start pm2.config.js --only deploy`
+
+## 其他
+* 列出 `pm2 list`
+* 監控 `pm2 monit`
+* 移除 `pm2 kill`
+* 全部停止 `pm2 stop all`
+* 全部刪除 `pm2 delete all`
+* 全部重開 `pm2 restart all`
