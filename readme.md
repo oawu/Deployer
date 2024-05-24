@@ -1,11 +1,9 @@
 # OA's Deployer 工具
 
----
-
-0. clone
-1. npm i
-2. 設定 Config.js
-3. DB 新增 Deployment 功能
+* clone
+* npm i
+* 設定 Config.js
+* DB 新增 Deployment 功能
 
 ## 啟動
 * 使用 PM2 來啟動，`pm2 start pm2.config.js --only deploy`
