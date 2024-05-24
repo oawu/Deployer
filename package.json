@@ -1,0 +1,22 @@
+{
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "node Core/Init.js"
+  },
+  "dependencies": {
+    "@oawu/_Config": "file:Config.js",
+    "@oawu/_Dog": "file:Core/Dog.js",
+    "@oawu/_Helper": "file:Core/Helper.js",
+    "@oawu/_Init": "file:Core/Init.js",
+    "@oawu/_Path": "file:Core/Path.js",
+    "@oawu/_Route": "file:Core/Route.js",
+    "@oawu/mysql-orm": "^1.0.8",
+    "@oawu/queue": "^1.0.11",
+    "axios": "^1.4.0",
+    "hashids": "^2.3.0",
+    "moment": "^2.29.4",
+    "pm2": "^5.3.1",
+    "socket.io": "^4.6.1",
+    "uuid": "^9.0.1"
+  }
+}

@@ -1,0 +1,10 @@
+.DS_Store
+
+package-lock.json
+
+npm-debug.log
+Config.js
+
+sftp-config.json
+
+node_modules/*
