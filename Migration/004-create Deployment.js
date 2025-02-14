@@ -1,6 +1,6 @@
 /**
  * @author      OA Wu <oawu.tw@gmail.com>
- * @copyright   Copyright (c) 2015 - 2024
+ * @copyright   Copyright (c) 2015 - 2025
  * @license     http://opensource.org/licenses/MIT  MIT License
  * @link        https://www.ioa.tw/
  */
@@ -19,6 +19,11 @@ module.exports = {
       .default(0)
       .comment('BitbucketHook ID')
 
+    db.attr('workflowId').int().unsigned()
+      .notNull()
+      .default(0)
+      .comment('Workflow ID')
+
 // ============
 
     db.attr('enable')
@@ -29,6 +34,15 @@ module.exports = {
       .default('no')
       .notNull()
       .comment('是否使用')
+
+    db.attr('force')
+      .enum(...[
+        'yes',
+        'no',
+      ]).collate('utf8mb4_unicode_ci')
+      .default('no')
+      .notNull()
+      .comment('當專案有 git 異動時，是否忽略強制部署？')
 
     db.attr('title').varchar(190).collate('utf8mb4_unicode_ci')
       .notNull()
@@ -47,7 +61,7 @@ module.exports = {
 
     db.attr('branch').varchar(190).collate('utf8mb4_unicode_ci')
       .notNull()
-      .default(3000)
+      .default('main')
       .comment('目標分支')
 
     db.attr('dir').varchar(190).collate('utf8mb4_unicode_ci')
@@ -57,9 +71,9 @@ module.exports = {
 
 // ============
 
-    db.attr('lastAt').datetime()
-      .default(null)
-      .comment('上次部署時間')
+    // db.attr('lastAt').datetime()
+    //   .default(null)
+    //   .comment('上次部署時間')
 
 // ============
 

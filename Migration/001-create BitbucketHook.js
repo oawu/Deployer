@@ -1,6 +1,6 @@
 /**
  * @author      OA Wu <oawu.tw@gmail.com>
- * @copyright   Copyright (c) 2015 - 2024
+ * @copyright   Copyright (c) 2015 - 2025
  * @license     http://opensource.org/licenses/MIT  MIT License
  * @link        https://www.ioa.tw/
  */
@@ -24,19 +24,17 @@ module.exports = {
       .default('')
       .comment('BitbucketHookPayload 的 repoFullname')
 
-    db.attr('status')
-      .enum(...[
-        'structuring',
-        'pending',
-        'pass',
-        'processing',
-        'success',
-        'failure',
-      ])
-      .collate('utf8mb4_unicode_ci')
-      .default('structuring')
+// ============
+
+    db.attr('deploymentId').int().unsigned()
       .notNull()
-      .comment('狀態')
+      .default(0)
+      .comment('Deployment ID')
+
+    db.attr('workflowId').int().unsigned()
+      .notNull()
+      .default(0)
+      .comment('Workflow ID')
 
 // ============
 
@@ -61,17 +59,17 @@ module.exports = {
 
 // ============
 
-    db.attr('sTime').decimal(13, 3).unsigned()
-      .default(null)
-      .comment('start unix time, 單位：秒')
+    // db.attr('sTime').decimal(13, 3).unsigned()
+    //   .default(null)
+    //   .comment('start unix time, 單位：秒')
 
-    db.attr('eTime').decimal(13, 3).unsigned()
-      .default(null)
-      .comment('end unix time, 單位：秒')
+    // db.attr('eTime').decimal(13, 3).unsigned()
+    //   .default(null)
+    //   .comment('end unix time, 單位：秒')
 
-    db.attr('dTime').decimal(13, 3).unsigned()
-      .default(null)
-      .comment('Duration unix time, 單位：秒')
+    // db.attr('dTime').decimal(13, 3).unsigned()
+    //   .default(null)
+    //   .comment('Duration unix time, 單位：秒')
 
 // ============
 
@@ -85,9 +83,9 @@ module.exports = {
       .default(0)
       .comment('BitbucketHook Payload ID')
 
-    db.attr('errorMessage').text().collate('utf8mb4_unicode_ci')
-      .notNull()
-      .comment('錯誤訊息')
+    // db.attr('errorMessage').text().collate('utf8mb4_unicode_ci')
+    //   .notNull()
+    //   .comment('錯誤訊息')
 
     db.attr('updateAt').datetime().notNull().default('CURRENT_TIMESTAMP').on('update', 'CURRENT_TIMESTAMP').comment('更新時間')
     db.attr('createAt').datetime().notNull().default('CURRENT_TIMESTAMP').comment('新增時間')

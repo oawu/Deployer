@@ -5,47 +5,83 @@
  * @link        https://www.ioa.tw/
  */
 
-const Path = require('@oawu/_Path')
 const URL        = require('url')
 const http       = require('http')
 const FileSystem = require('fs')
 const uuid       = require('uuid')
-const Helper     = require('@oawu/_Helper')
+const { Json, Type: T } = require('@oawu/helper') 
+
+const { log }     = require('@oawu/_Helper')
+const Path       = require('@oawu/_Path')
 
 let _page404 = null
 let _crosHeaders = []
+const _id_Data_Map = new Map()
 
-// 新增 Response method
-http.ServerResponse.prototype.output = function(body, code = 200) {
+const _output = data => (body, code = null) => {
+  if (!(T.obj(data) && _id_Data_Map.has(data.id))) {
+    return
+  } else {
+    _id_Data_Map.delete(data.id)
+  }
+
   let header = { 'Content-Type': 'text/html; charset=UTF-8' }
 
-  if (body === null || body === undefined) {
+  if (body === null || body === undefined) { body = '' }
+
+  if (body instanceof Error) {
+    const _body = {}
+
+    _body.message = body.message
+
+    if (body.cause !== undefined) {
+      if (body.cause instanceof Error && T.neStr(body.cause.message)) {
+        _body.cause = body.cause.message
+      }
+      if (T.neStr(body.cause)) {
+        _body.cause = body.cause
+      }
+    }
+
+    _body.stack = body.stack.split("\n")
+
+    body = _body
+
+    if (code === null) { code = 400 }
+  }
+
+  if (T.num(body)) {
+    body = `${body}`
+  }
+
+  if (T.bool(body)) {
+    body = body ? 'true' : 'false'
+  }
+
+  if (T.func(body)) {
     body = ''
   }
 
-  if (body instanceof Error) {
-      code = 400
-      body = { message: body.message, stack: body.stack.split("\n") }
-  }
+  if (T.obj(body) || T.arr(body)) {
+    const text = Json.encode(body)
 
-  if (typeof body == 'object') {
-    const text = Helper.Json.encode(body)
-
-    if (text instanceof Error) {
-      code = 400
+    if (T.error(text)) {
       body = text.message
+      if (code === null) { code = 400 }
     } else {
       header = { 'Content-Type': 'application/json; charset=UTF-8' }
       body = text
     }
   }
 
-  this.writeHead(code, { ..._crosHeaders, ...header })
-  this.write(body)
-  this.end()
+  code = code !== null ? code : 200
 
-  Helper.print('Http', this._.rid, `[${this._.method}]${this._.pathname}(${code})`)
-  return this
+  data.response.writeHead(code, { ..._crosHeaders, ...header })
+  data.response.write(body)
+  data.response.end()
+  data.log('Http', '←', data.id, `[${data.method}]${data.pathname}(${code})`)
+
+  data = null
 }
 
 // 轉換 name => controller
@@ -74,148 +110,152 @@ const _parseFunc = func => {
 }
 
 // 錯誤頁面
-const _error = (response, error = null) => {
-  response.output(error, 500)
-}
+const _error = (output, error = null) => output(error, 500)
 
 // 預設 404 結果
-const _d404 = response => {
-  response.output('🤷‍♀️', 404)
-}
+const _d404 = output => output('🤷‍♀️', 404)
 
 // 執行
-const _extc = (info, request, response) => {
+const _exec = (func, data, output) => {
+  if (T.func(func)) {
+    try {
+      output(func.call(data, data, output))
+    } catch (error) {
+      output(error, 400)
+    }
+  }
+
+  if (T.asyncFunc(func)) {
+    func.call(data, data, output)
+      .then(result => output(result))
+      .catch(error => output(error, 400))
+  }
+  if (T.promise(func)) {
+    func
+      .then(result => output(result))
+      .catch(error => output(error, 400))
+  }
+}
+
+const _dispatch = (info, data) => {
+  const output = _output(data)
+
   if (!info) { // 找不到對應的 router
-    return _d404(response)
+    return _d404(output)
   }
 
   if (info.type == 'function') {
-
-    if (typeof info.func != 'function') {
-      return _d404(response)
-    }
-
-    return info.func.call({
-      params: request._.params,
-      queries: request._.queries,
-      input: request._.input,
-      json: request._.json
-    }, request, response, Helper.print)
+    return T.func(info.func) || T.asyncFunc(info.func)
+      ? _exec(info.func, data, output)
+      : _d404(output)
   }
 
   if (info.type != 'controller') {
-    return _d404(response)
+    return _d404(output)
   }
 
   // 讀取 controller
   return FileSystem.exists(info.file, exists => {
     if (!exists) {
-      return _d404(response)
+      return _d404(output)
     }
 
     // 引入 controller
-    let result = null
+    let controller = null
     let error = null
     try {
-      result = require(info.file)
+      controller = require(info.file)
       error = null
     } catch(e) {
       error = e
-      result = null
+      controller = null
     }
 
     if (error !== null) {
-      return _error(response, error)
+      return _error(output, error)
     }
 
-    if (result === null) {
-      return _d404(response)
+    if (controller === null) {
+      return _d404(output)
     }
 
-    if (typeof result[info.func] != 'function') {
-      return _d404(response)
-    }
-
-    // 執行 controller
-    return result[info.func].call({
-      params: request._.params,
-      queries: request._.queries,
-      input: request._.input,
-      json: request._.json
-    }, request, response, Helper.print)
+    T.func(controller[info.func]) || T.asyncFunc(controller[info.func])
+      ? _exec(controller[info.func], data, output)
+      : _d404(output)
   })
+}
+
+const _parse = (method, pathname, url) => {
+  // 找出 request 是符合哪個 router
+  let router = null
+  let params = null
+  
+  const routers = ['get', 'post', 'put', 'delete', 'options'].includes(method)
+    ? Router[method]
+    : []
+
+  for (const [segment, r] of routers) {
+    let result = (new RegExp('^' + segment + '$', 'g')).exec(pathname)
+
+    if (result !== null) {
+      router = r
+      params = result.groups || null
+    }
+  }
+
+  let _query = T.str(url._query) ? url._query : ''
+  const query = {}
+
+  _query = _query.split('&').map(token => token.split('=')).map(([key, ...vs]) => {
+    return { key, val: vs.join('=') }
+  }).filter(({ key }) => key !== '')
+
+  for (const { key, val } of _query) {
+    query[key] = val
+  }
+
+  return { router, params, query }
 }
 
 // 分配
 const dispatch = (request, response) => {
   const url = URL.parse(request.url)
-  const rid = uuid.v4()
+  const id = uuid.v4()
   const method = request.method.toLowerCase()
   const pathname = url.pathname.replace(/\/+/gm, '/').replace(/\/$|^\//gm, '')
+  const { router, param, query } = _parse(method, pathname, url)
   
-  let query = typeof url.query == 'string' ? url.query : ''
-  const queries = {}
-
-  query = query.split('&').map(token => token.split('=')).map(([key, ...vs]) => {
-    return { key, val: vs.join('=') }
-  }).filter(({ key }) => key !== '')
-
-  for (const {key, val} of query) {
-    queries[key] = val
-  }
-    
-  request._ = {
-    rid,
-    method,
-    pathname,
-
-    input: '',
-    json: null,
-    params: {},
-    queries
-  }
-
-  response._ = {
-    rid,
-    method,
-    pathname
-  }
-
-  // 找出 request 是符合哪個 router
-  let router = null
-  
-  const routers = ['get', 'post', 'put', 'delete', 'options'].includes(response._.method)
-    ? Router[response._.method]
-    : []
-
-  for (const [segment, r] of routers) {
-    let result = (new RegExp('^' + segment + '$', 'g')).exec(response._.pathname)
-
-    if (result !== null) {
-      router = r
-      request._.params = result.groups || {}
-    }
-  }
-
   // 取得、整理 request body
-  const param = []
-  request.on('data', chunk => param.push(chunk))
+  const _param = []
+  request.on('data', chunk => _param.push(chunk))
   request.on('end', _ => {
+    const input = Buffer.concat(_param).toString('utf8')
+    const _json = Json.decode(input)
+    const json = T.error(_json) ? null : _json
 
-    request._.input = Buffer.concat(param).toString('utf8')
+    const data = {
+      id,
+      method,
+      get header () {
+        return this.request.headers
+      },
+      pathname,
+      param,
+      query,
+      input,
+      json,
+      request,
+      response,
+      log
+    }
 
-    const json = Helper.Json.decode(request._.input)
-    
-    request._.json = json instanceof Error
-      ? null
-      : json
+    _id_Data_Map.set(id, data)
 
-    _extc(
+    _dispatch(
       router
         ? router._info
         : _page404,
-      request,
-      response)
+      data)
   })
 }
 
@@ -261,12 +301,12 @@ const Router = function(method, segment = '') {
   }
 }
 
-Router.all  = new Map()
-Router.get  = new Map()
-Router.post = new Map()
-Router.put  = new Map()
+Router.all     = new Map()
+Router.get     = new Map()
+Router.post    = new Map()
+Router.put     = new Map()
 Router.delete  = new Map()
-Router.options  = new Map()
+Router.options = new Map()
 
 Router.prototype.func = function(func) {
   this._info = _parseFunc(func)
@@ -294,7 +334,7 @@ module.exports = {
       }
 
       const tmp = {}
-      for (const { key, val } of headers.filter(header => typeof header == 'object' && header !== null && !Array.isArray(header)).filter(({ key = '', val = '' }) => typeof key == 'string' && key !== '' && typeof val == 'string')) {
+      for (const { key, val } of headers.filter(header => T.obj(header)).filter(({ key = '', val = '' }) => T.neStr(key) && T.str(val))) {
         tmp[key] = val
       }
 
