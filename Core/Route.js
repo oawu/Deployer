@@ -65,7 +65,7 @@ const _output = data => (body, code = null) => {
   if (T.obj(body) || T.arr(body)) {
     const text = Json.encode(body)
 
-    if (T.error(text)) {
+    if (T.err(text)) {
       body = text.message
       if (code === null) { code = 400 }
     } else {
@@ -231,7 +231,7 @@ const dispatch = (request, response) => {
   request.on('end', _ => {
     const input = Buffer.concat(_param).toString('utf8')
     const _json = Json.decode(input)
-    const json = T.error(_json) ? null : _json
+    const json = T.err(_json) ? null : _json
 
     const data = {
       id,

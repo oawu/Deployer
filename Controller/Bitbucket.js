@@ -18,7 +18,7 @@ const _parse = {
   header: async (hook, _header) => {
     const header = Json.decode(_header)
 
-    if (T.error(header)) { throw new Error(`解析 Header 失敗(2)`, { cause: header }) }
+    if (T.err(header)) { throw new Error(`解析 Header 失敗(2)`, { cause: header }) }
     if (!T.obj(header)) { throw new Error('Header 不是 object') }
     if (!T.str(header['x-event-key'])) { throw new Error('Header 中找不到 x-event-key') }
     if (!T.str(header['x-hook-uuid'])) { throw new Error('Header 中找不到 x-hook-uuid') }
@@ -40,7 +40,7 @@ const _parse = {
   payload: async (hook, payload) => {
     const payloadJson = Json.decode(payload)
     
-    if (T.error(payloadJson)) {
+    if (T.err(payloadJson)) {
       throw new Error(`解析 Payload 失敗(2)`, { cause: payloadJson })
     }
     if (!T.obj(payloadJson)) {
@@ -216,12 +216,12 @@ const _parse = {
 module.exports = {
   async index (data) {
     const _header = Json.encode(data.header)
-    if (T.error(_header)) {
+    if (T.err(_header)) {
       throw new Error(`解析 Header 失敗(1)`, { cause: _header })
     }
 
     const _payload = Json.encode(data.json)
-    if (T.error(_payload)) {
+    if (T.err(_payload)) {
       throw new Error(`解析 Payload 失敗(1)`, { cause: _payload })
     }
 

@@ -11,7 +11,7 @@ const Orm    = require('@oawu/mysql-orm')
 const { Type: T }      = require('@oawu/helper')
 
 const Config = require('@oawu/_Config')
-const { log } = require('@oawu/_Helper') 
+const { log: sysLog } = require('@oawu/_Helper') 
 const { Sigint, tryIgnore } = require('@oawu/helper') 
 const Path   = require('@oawu/_Path')
 
@@ -67,66 +67,66 @@ const _initMySQL = async _ => {
   Sigint.push(async _ => {
     const { DB } = require('@oawu/mysql-orm')
     await DB.close()
-    log(`關閉 DB`, `ok`)
+    sysLog(`關閉 DB`, `ok`)
   })
 
   await Orm.Init()
-  log('載入 MySQL', 'ok')
+  sysLog('載入 MySQL', 'ok')
 }
 const _checkMigrate = async _ => {
   const { Migrate } = Orm
 
   const { version } = await tryIgnore(Migrate.execute())
 
-  if (T.error(version)) {
-    log('確認 Migrate', 'err')
+  if (T.err(version)) {
+    sysLog('確認 Migrate', 'err')
     throw new Error('確認 Migrate 失敗', { cause: version })
   }
-  log('確認 Migrate', 'ok', `版本：${version}`)
+  sysLog('確認 Migrate', 'ok', `版本：${version}`)
 }
 const _checkOrmModel = _ => {
-  log('確認 Model')
+  sysLog('確認 Model')
   
   const { Model } = Orm
   
   if (!T.func(Model.BitbucketHook)) {
-    log('  ↳ BitbucketHook', 'err')
+    sysLog('  ↳ BitbucketHook', 'err')
     throw new Error('Model BitbucketHook 不存在')
   }
-  log('  ↳ BitbucketHook', 'ok')
+  sysLog('  ↳ BitbucketHook', 'ok')
 
 
   if (!T.func(Model.BitbucketHookHeader)) {
-    log('  ↳ BitbucketHookHeader', 'err')
+    sysLog('  ↳ BitbucketHookHeader', 'err')
     throw new Error('Model BitbucketHookHeader 不存在')
   }
-  log('  ↳ BitbucketHookHeader', 'ok')
+  sysLog('  ↳ BitbucketHookHeader', 'ok')
 
 
   if (!T.func(Model.BitbucketHookPayload)) {
-    log('  ↳ BitbucketHookPayload', 'err')
+    sysLog('  ↳ BitbucketHookPayload', 'err')
     throw new Error('Model BitbucketHookPayload 不存在')
   }
-  log('  ↳ BitbucketHookPayload', 'ok')
+  sysLog('  ↳ BitbucketHookPayload', 'ok')
 
   if (!T.func(Model.Deployment)) {
-    log('  ↳ Deployment', 'err')
+    sysLog('  ↳ Deployment', 'err')
     throw new Error('Model Deployment 不存在')
   }
-  log('  ↳ Deployment', 'ok')
+  sysLog('  ↳ Deployment', 'ok')
 
 
   if (!T.func(Model.DeploymentTask)) {
-    log('  ↳ DeploymentTask', 'err')
+    sysLog('  ↳ DeploymentTask', 'err')
     throw new Error('Model DeploymentTask 不存在')
   }
-  log('  ↳ DeploymentTask', 'ok')
+  sysLog('  ↳ DeploymentTask', 'ok')
 
   if (!T.func(Model.DeploymentCommand)) {
-    log('  ↳ DeploymentCommand', 'err')
+    sysLog('  ↳ DeploymentCommand', 'err')
     throw new Error('Model DeploymentCommand 不存在')
   }
-  log('  ↳ DeploymentCommand', 'ok')
+  sysLog('  ↳ DeploymentCommand', 'ok')
 }
 const _loadRoute = async _ => {
   let error = null
@@ -139,11 +139,11 @@ const _loadRoute = async _ => {
     Route = null
   }
 
-  if (T.error(error)) {
-    log('載入 Router', 'err', error)
+  if (T.err(error)) {
+    sysLog('載入 Router', 'err', error)
     throw new Error('載入 Router 失敗', { cause: error })
   }
-  log('載入 Router', 'ok')
+  sysLog('載入 Router', 'ok')
 
   Route.cros.headers = [
     { key: 'Access-Control-Allow-Headers', val: 'Content-Type, Authorization, X-Requested-With' },
@@ -155,21 +155,21 @@ const _loadRoute = async _ => {
     try {
       require(router)
     } catch (error) {
-      log('載入 Routers', 'err', error)
+      sysLog('載入 Routers', 'err', error)
       throw new Error('載入 Router 失敗', { cause: error })
     }
   }
-  log('載入 Routers', 'ok')
+  sysLog('載入 Routers', 'ok')
 
   return Route
 }
 
 const main = async _ => {
-  log('服務開始')
-  log('='.repeat(20))
+  sysLog('服務開始')
+  sysLog('='.repeat(20))
 
   process.on('SIGINT', async _ => await Sigint.execute())
-  log(`初始`, `ok`)
+  sysLog(`初始`, `ok`)
 
   await _initMySQL()
   await _checkMigrate()
@@ -178,12 +178,12 @@ const main = async _ => {
 
   const Http = await new Promise((resolve, reject) => {
     const Http = require('http').Server()
-    Http.on('error', error => log('Http', 'err', error))
+    Http.on('error', error => sysLog('Http', 'err', error))
     Http.listen(Config.port, _ => resolve(Http))
     Http.on('request', Route.dispatch)
     Http.setTimeout(10 * 1000)
   })
-  log('開啟 Http', 'ok', `http://127.0.0.1:${Config.port}`)
+  sysLog('開啟 Http', 'ok', `http://127.0.0.1:${Config.port}`)
 
 return
 
@@ -202,31 +202,31 @@ return
 
 main()
   .then(_ => {
-
+    
   })
   .catch(async error => {
-    log('')
-    log('發生錯誤')
-    log('='.repeat(20))
+    sysLog('')
+    sysLog('發生錯誤')
+    sysLog('='.repeat(20))
 
-    console.error(error);
-    process.exit()
+    // console.error(error);
+    // process.exit()
     
     if (T.neStr(error.message)) {
-      log(`訊息：${error.message}`)
+      sysLog(`訊息：${error.message}`)
     }
 
     if (error.cause !== undefined) {
       if (error.cause instanceof Error && T.neStr(error.cause.message)) {
-        log(`原因：${error.cause.message}`)
+        sysLog(`原因：${error.cause.message}`)
       }
       if (T.neStr(error.cause)) {
-        log(`原因：${error.cause}`)
+        sysLog(`原因：${error.cause}`)
       }
     }
 
     if (T.neStr(error.stdout)) {
-      log(`輸出：${error.stdout}`)
+      sysLog(`輸出：${error.stdout}`)
     }
   })
   .finally(async _ => {
