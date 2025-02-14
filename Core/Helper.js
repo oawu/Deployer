@@ -1,15 +1,15 @@
 /**
  * @author      OA Wu <oawu.tw@gmail.com>
- * @copyright   Copyright (c) 2015 - 2024
+ * @copyright   Copyright (c) 2015 - 2025
  * @license     http://opensource.org/licenses/MIT  MIT License
  * @link        https://www.ioa.tw/
  */
 
-const { Argv, Type: T } = require('@oawu/helper')
 const Exec = require('child_process').exec
+const { Argv, Type: T } = require('@oawu/helper')
 
 let isPm2 = null
-const log = (...texts) => {
+const syslog = (...texts) => {
   if (isPm2 === null) {
     const dash = Argv.dash()
     isPm2 = dash['-PM2'] !== undefined
@@ -38,6 +38,6 @@ const exec = (command, option = { maxBuffer: 1024 }) => new Promise((resolve, re
 }))
 
 module.exports = {
-  log,
+  syslog,
   exec,
 }

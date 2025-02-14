@@ -5,7 +5,7 @@
  * @link        https://www.ioa.tw/
  */
 
-const { log: sysLog, exec } = require('@oawu/_Helper') 
+const { syslog, exec } = require('@oawu/_Helper') 
 const { Type: T, tryIgnore } = require('@oawu/helper') 
 const { Model } = require('@oawu/mysql-orm')
 const uuid = require('uuid')
@@ -98,7 +98,7 @@ const _checkPass = async (percent, data, name, title, cmd = null) => {
     throw _Pass(title, data)
   }
 
-  sysLog('Workflow', data.hook.id, title)
+  syslog('Workflow', data.hook.id, title)
   
   return await Model.WorkflowLog.create({ workflowId: data.workflow.id, percent, output: '', funcName: T.str(name) ? name : '', title: T.str(title) ? title : '', cmd: T.str(cmd) ? cmd : '', sTime: Date.now() / 1000 })
 }
@@ -211,7 +211,7 @@ const _runCmds = async (data, percent) => {
   await log.saveWithTime()
 }
 const _finally = async (data, percent) => {
-  sysLog('Workflow', data.hook.id, '完成')
+  syslog('Workflow', data.hook.id, '完成')
 
   await tryIgnore(Promise.all([
     Model.WorkflowLog.create({ workflowId: data.workflow.id, title: `成功`, percent, output: '' }),
@@ -266,7 +266,7 @@ Workflow.start = async (hook, header, payload, isIgnoreErrors = true) => {
 
   } catch (error) {
     if (error instanceof _Pass) {
-      return sysLog('Workflow', hook.id, '取消')
+      return syslog('Workflow', hook.id, '取消')
     }
 
     if (error instanceof _Error) {
@@ -276,13 +276,13 @@ Workflow.start = async (hook, header, payload, isIgnoreErrors = true) => {
         error.data.workflow.saveWithTimeStatus(Workflow.STATUS_FAILURE),
       ]))
 
-      return sysLog('Workflow', hook.id, '發生錯誤(1)', error)
+      return syslog('Workflow', hook.id, '發生錯誤(1)', error)
     }
 
     if (!isIgnoreErrors) {
       throw error
     } else {
-      sysLog('Workflow', hook.id, '發生錯誤(2)', error)
+      syslog('Workflow', hook.id, '發生錯誤(2)', error)
     }
   }
 }

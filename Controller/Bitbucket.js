@@ -1,18 +1,13 @@
 /**
  * @author      OA Wu <oawu.tw@gmail.com>
- * @copyright   Copyright (c) 2015 - 2024
+ * @copyright   Copyright (c) 2015 - 2025
  * @license     http://opensource.org/licenses/MIT  MIT License
  * @link        https://www.ioa.tw/
  */
 
 const moment    = require('moment')
 const { Model } = require('@oawu/mysql-orm')
-
-const { Type: T, Json }         = require('@oawu/helper')
-
-// const Path      = require('@oawu/_Path')
-// const HookEvent = require(`${Path.lib}HookEvent`)
-// const DeployStep = require(`${Path.lib}DeployStep`)
+const { Type: T, Json } = require('@oawu/helper')
 
 const _parse = {
   header: async (hook, _header) => {
@@ -246,6 +241,10 @@ module.exports = {
 }
 
 
+
+// const Path      = require('@oawu/_Path')
+// const HookEvent = require(`${Path.lib}HookEvent`)
+// const DeployStep = require(`${Path.lib}DeployStep`)
 
 
 

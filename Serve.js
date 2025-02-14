@@ -6,14 +6,12 @@
  */
 
 const FileSystem = require('fs/promises')
+const Orm = require('@oawu/mysql-orm')
+const { Sigint, tryIgnore, Type: T } = require('@oawu/helper')
 
-const Orm    = require('@oawu/mysql-orm')
-const { Type: T }      = require('@oawu/helper')
-
+const Path = require('@oawu/_Path')
 const Config = require('@oawu/_Config')
-const { log: sysLog } = require('@oawu/_Helper') 
-const { Sigint, tryIgnore } = require('@oawu/helper') 
-const Path   = require('@oawu/_Path')
+const { syslog } = require('@oawu/_Helper') 
 
 const _scanFiles = async (directory, ext = null) => {
   const result = []
@@ -67,11 +65,11 @@ const _initMySQL = async _ => {
   Sigint.push(async _ => {
     const { DB } = require('@oawu/mysql-orm')
     await DB.close()
-    sysLog(`關閉 DB`, `ok`)
+    syslog(`關閉 DB`, `ok`)
   })
 
   await Orm.Init()
-  sysLog('載入 MySQL', 'ok')
+  syslog('載入 MySQL', 'ok')
 }
 const _checkMigrate = async _ => {
   const { Migrate } = Orm
@@ -79,54 +77,54 @@ const _checkMigrate = async _ => {
   const { version } = await tryIgnore(Migrate.execute())
 
   if (T.err(version)) {
-    sysLog('確認 Migrate', 'err')
+    syslog('確認 Migrate', 'err')
     throw new Error('確認 Migrate 失敗', { cause: version })
   }
-  sysLog('確認 Migrate', 'ok', `版本：${version}`)
+  syslog('確認 Migrate', 'ok', `版本：${version}`)
 }
 const _checkOrmModel = _ => {
-  sysLog('確認 Model')
+  syslog('確認 Model')
   
   const { Model } = Orm
   
   if (!T.func(Model.BitbucketHook)) {
-    sysLog('  ↳ BitbucketHook', 'err')
+    syslog('  ↳ BitbucketHook', 'err')
     throw new Error('Model BitbucketHook 不存在')
   }
-  sysLog('  ↳ BitbucketHook', 'ok')
+  syslog('  ↳ BitbucketHook', 'ok')
 
 
   if (!T.func(Model.BitbucketHookHeader)) {
-    sysLog('  ↳ BitbucketHookHeader', 'err')
+    syslog('  ↳ BitbucketHookHeader', 'err')
     throw new Error('Model BitbucketHookHeader 不存在')
   }
-  sysLog('  ↳ BitbucketHookHeader', 'ok')
+  syslog('  ↳ BitbucketHookHeader', 'ok')
 
 
   if (!T.func(Model.BitbucketHookPayload)) {
-    sysLog('  ↳ BitbucketHookPayload', 'err')
+    syslog('  ↳ BitbucketHookPayload', 'err')
     throw new Error('Model BitbucketHookPayload 不存在')
   }
-  sysLog('  ↳ BitbucketHookPayload', 'ok')
+  syslog('  ↳ BitbucketHookPayload', 'ok')
 
   if (!T.func(Model.Deployment)) {
-    sysLog('  ↳ Deployment', 'err')
+    syslog('  ↳ Deployment', 'err')
     throw new Error('Model Deployment 不存在')
   }
-  sysLog('  ↳ Deployment', 'ok')
+  syslog('  ↳ Deployment', 'ok')
 
 
   if (!T.func(Model.DeploymentTask)) {
-    sysLog('  ↳ DeploymentTask', 'err')
+    syslog('  ↳ DeploymentTask', 'err')
     throw new Error('Model DeploymentTask 不存在')
   }
-  sysLog('  ↳ DeploymentTask', 'ok')
+  syslog('  ↳ DeploymentTask', 'ok')
 
   if (!T.func(Model.DeploymentCommand)) {
-    sysLog('  ↳ DeploymentCommand', 'err')
+    syslog('  ↳ DeploymentCommand', 'err')
     throw new Error('Model DeploymentCommand 不存在')
   }
-  sysLog('  ↳ DeploymentCommand', 'ok')
+  syslog('  ↳ DeploymentCommand', 'ok')
 }
 const _loadRoute = async _ => {
   let error = null
@@ -140,10 +138,10 @@ const _loadRoute = async _ => {
   }
 
   if (T.err(error)) {
-    sysLog('載入 Router', 'err', error)
+    syslog('載入 Router', 'err', error)
     throw new Error('載入 Router 失敗', { cause: error })
   }
-  sysLog('載入 Router', 'ok')
+  syslog('載入 Router', 'ok')
 
   Route.cros.headers = [
     { key: 'Access-Control-Allow-Headers', val: 'Content-Type, Authorization, X-Requested-With' },
@@ -155,21 +153,21 @@ const _loadRoute = async _ => {
     try {
       require(router)
     } catch (error) {
-      sysLog('載入 Routers', 'err', error)
+      syslog('載入 Routers', 'err', error)
       throw new Error('載入 Router 失敗', { cause: error })
     }
   }
-  sysLog('載入 Routers', 'ok')
+  syslog('載入 Routers', 'ok')
 
   return Route
 }
 
 const main = async _ => {
-  sysLog('服務開始')
-  sysLog('='.repeat(20))
+  syslog('服務開始')
+  syslog('='.repeat(20))
 
   process.on('SIGINT', async _ => await Sigint.execute())
-  sysLog(`初始`, `ok`)
+  syslog(`初始`, `ok`)
 
   await _initMySQL()
   await _checkMigrate()
@@ -178,12 +176,12 @@ const main = async _ => {
 
   const Http = await new Promise((resolve, reject) => {
     const Http = require('http').Server()
-    Http.on('error', error => sysLog('Http', 'err', error))
+    Http.on('error', error => syslog('Http', 'err', error))
     Http.listen(Config.port, _ => resolve(Http))
     Http.on('request', Route.dispatch)
     Http.setTimeout(10 * 1000)
   })
-  sysLog('開啟 Http', 'ok', `http://127.0.0.1:${Config.port}`)
+  syslog('開啟 Http', 'ok', `http://127.0.0.1:${Config.port}`)
 
 return
 
@@ -205,28 +203,28 @@ main()
     
   })
   .catch(async error => {
-    sysLog('')
-    sysLog('發生錯誤')
-    sysLog('='.repeat(20))
+    syslog('')
+    syslog('發生錯誤')
+    syslog('='.repeat(20))
 
     // console.error(error);
     // process.exit()
     
     if (T.neStr(error.message)) {
-      sysLog(`訊息：${error.message}`)
+      syslog(`訊息：${error.message}`)
     }
 
     if (error.cause !== undefined) {
       if (error.cause instanceof Error && T.neStr(error.cause.message)) {
-        sysLog(`原因：${error.cause.message}`)
+        syslog(`原因：${error.cause.message}`)
       }
       if (T.neStr(error.cause)) {
-        sysLog(`原因：${error.cause}`)
+        syslog(`原因：${error.cause}`)
       }
     }
 
     if (T.neStr(error.stdout)) {
-      sysLog(`輸出：${error.stdout}`)
+      syslog(`輸出：${error.stdout}`)
     }
   })
   .finally(async _ => {

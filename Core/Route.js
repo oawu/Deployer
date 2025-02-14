@@ -1,6 +1,6 @@
 /**
  * @author      OA Wu <oawu.tw@gmail.com>
- * @copyright   Copyright (c) 2015 - 2024
+ * @copyright   Copyright (c) 2015 - 2025
  * @license     http://opensource.org/licenses/MIT  MIT License
  * @link        https://www.ioa.tw/
  */
@@ -9,10 +9,11 @@ const URL        = require('url')
 const http       = require('http')
 const FileSystem = require('fs')
 const uuid       = require('uuid')
+
 const { Json, Type: T } = require('@oawu/helper') 
 
-const { log }     = require('@oawu/_Helper')
 const Path       = require('@oawu/_Path')
+const { syslog }     = require('@oawu/_Helper')
 
 let _page404 = null
 let _crosHeaders = []
@@ -79,7 +80,7 @@ const _output = data => (body, code = null) => {
   data.response.writeHead(code, { ..._crosHeaders, ...header })
   data.response.write(body)
   data.response.end()
-  data.log('Http', '←', data.id, `[${data.method}]${data.pathname}(${code})`)
+  data.syslog('Http', '←', data.id, `[${data.method}]${data.pathname}(${code})`)
 
   data = null
 }
@@ -246,7 +247,7 @@ const dispatch = (request, response) => {
       json,
       request,
       response,
-      log
+      syslog
     }
 
     _id_Data_Map.set(id, data)
