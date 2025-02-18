@@ -24,7 +24,7 @@
 //     }
 
 //     const id = Model.BitbucketHook.decodeToken(this.queries.token)
-    
+
 //     if (id instanceof Error) {
 //       return response.output(`<h1>哎呀！</h1><article><p>發生錯誤囉(2)！</p><b>：）</b>`, 400)
 //     }

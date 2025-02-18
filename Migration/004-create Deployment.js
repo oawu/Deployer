@@ -24,6 +24,44 @@ module.exports = {
       .default(0)
       .comment('Workflow ID')
 
+
+// ============
+
+    db.attr('type')
+      .enum(...[
+        'local',
+        'ssh-password',
+        'ssh-key',
+      ]).collate('utf8mb4_unicode_ci')
+      .default('local')
+      .notNull()
+      .comment('類型')
+
+    db.attr('sshHost').varchar(190).collate('utf8mb4_unicode_ci')
+      .notNull()
+      .default('')
+      .comment('SSH Host')
+
+    db.attr('sshUser').varchar(190).collate('utf8mb4_unicode_ci')
+      .notNull()
+      .default('')
+      .comment('SSH User')
+
+    db.attr('sshPort').smallint().unsigned()
+      .notNull()
+      .default(22)
+      .comment('SSH Port')
+
+    db.attr('sshPassword').varchar(190).collate('utf8mb4_unicode_ci')
+      .notNull()
+      .default('')
+      .comment('SSH 連線密碼')
+
+    db.attr('sshKeyPath').varchar(190).collate('utf8mb4_unicode_ci')
+      .notNull()
+      .default('')
+      .comment('SSH 連線私鑰檔案位置')
+
 // ============
 
     db.attr('enable')
@@ -48,11 +86,6 @@ module.exports = {
       .notNull()
       .default('')
       .comment('標題')
-
-    db.attr('timer').int().unsigned()
-      .notNull()
-      .default(3000)
-      .comment('檢查的間隔時間，千分之一秒')
 
     db.attr('fullname').varchar(190).collate('utf8mb4_unicode_ci')
       .notNull()

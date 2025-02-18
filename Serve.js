@@ -11,7 +11,7 @@ const { Sigint, tryIgnore, Type: T } = require('@oawu/helper')
 
 const Path = require('@oawu/_Path')
 const Config = require('@oawu/_Config')
-const { syslog } = require('@oawu/_Helper') 
+const { syslog } = require('@oawu/_Helper')
 
 const _scanFiles = async (directory, ext = null) => {
   const result = []
@@ -50,12 +50,12 @@ const _scanFiles = async (directory, ext = null) => {
 
 const _initMySQL = async _ => {
   Orm.Config.connect = {
-    host:     Config.mysql.host,
-    user:     Config.mysql.user,
+    host: Config.mysql.host,
+    user: Config.mysql.user,
     password: Config.mysql.pswd,
     database: Config.mysql.base,
-    port:     Config.mysql.port,
-    charset:  Config.mysql.charset,
+    port: Config.mysql.port,
+    charset: Config.mysql.charset,
   }
 
   Orm.Config.modelsDir = Path.model
@@ -84,9 +84,9 @@ const _checkMigrate = async _ => {
 }
 const _checkOrmModel = _ => {
   syslog('確認 Model')
-  
+
   const { Model } = Orm
-  
+
   if (!T.func(Model.BitbucketHook)) {
     syslog('  ↳ BitbucketHook', 'err')
     throw new Error('Model BitbucketHook 不存在')
@@ -146,7 +146,7 @@ const _loadRoute = async _ => {
   Route.cros.headers = [
     { key: 'Access-Control-Allow-Headers', val: 'Content-Type, Authorization, X-Requested-With' },
     { key: 'Access-Control-Allow-Methods', val: 'GET, POST, PUT, DELETE, OPTIONS' },
-    { key: 'Access-Control-Allow-Origin',  val: '*' },
+    { key: 'Access-Control-Allow-Origin', val: '*' },
   ]
 
   for (const router of await _scanFiles(Path.router)) {
@@ -182,34 +182,18 @@ const main = async _ => {
     Http.setTimeout(10 * 1000)
   })
   syslog('開啟 Http', 'ok', `http://127.0.0.1:${Config.port}`)
-
-return
-
-  // await require(`${Path.lib}Socket.js`).create(Http)
-  // _Helper.print('啟動 Socket', 'ok')
-
-  // const { Model: { Deployment } } = require('@oawu/mysql-orm')
-  // const deployments = await Deployment.Enables()
-
-  // // const Cron = require(`${Path.lib}Cron.js`)
-  // // await Promise.all(deployments.map(({ deployment, commands }) => Cron(deployment, commands)))
-  
-  // _Helper.print('排程', 'Bitbucket Hook', deployments.length, 'ok')
-  // _Helper.print(deployments.map(({ deployment: { title } }) => ` ↳ ${title}`).join('\n'))
 }
 
 main()
   .then(_ => {
-    
+
   })
   .catch(async error => {
     syslog('')
     syslog('發生錯誤')
     syslog('='.repeat(20))
 
-    // console.error(error);
-    // process.exit()
-    
+
     if (T.neStr(error.message)) {
       syslog(`訊息：${error.message}`)
     }
@@ -234,236 +218,3 @@ main()
 
     // await Sigint.run()
   })
-
-// let a = false
-// setTimeout(async _ => {
-//   if (a) {return}
-//   console.error(1);
-//   await new Promise(r => setTimeout(r, 1000))
-//   if (a) {return}
-//   console.error(2);
-//   await new Promise(r => setTimeout(r, 1000))
-//   if (a) {return}
-//   console.error(3);
-//   await new Promise(r => setTimeout(r, 1000))
-//   if (a) {return}
-//   console.error(4);
-// }, 100)
-// setTimeout(async _ => {
-//   console.error('x1');
-//   // clearTimeout(a)
-//   a = true
-//   console.error('x2');
-// }, 200)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const Queue  = require('@oawu/queue')
-// const Dog    = require('@oawu/dog')
-
-// const Path   = require('@oawu/_Path')
-// const Config = require('@oawu/_Config')
-// const _Helper = require('@oawu/_Helper')
-
-
-// const Sigint = {
-//   $: [],
-//   run (closure = null) {
-//     let q = Queue()
-
-//     for (const sigint of this.$) {
-//       q.enqueue(_next => {
-//         if (typeof sigint != 'function') {
-//           return _next()
-//         }
-//         try {
-//           sigint(_next)
-//         } catch (_) {
-//           return _next()
-//         }
-//       })
-//     }
-
-//     if (typeof closure == 'function') {
-//       q.enqueue(_next => closure(_next))
-//     }
-
-//     q.enqueue(_next => _next(process.exit(1)))
-//   },
-//   push (...data) {
-//     this.$.push(...data)
-//     return this
-//   },
-// }
-
-// Queue()
-//   .enqueue(next => {
-//     process.on('SIGINT', _ => Sigint.run())
-
-//     _Helper.print(`初始`, `ok`)
-//     next()
-//   })
-//   .enqueue(next => { // 資料庫
-//     const Orm = require('@oawu/mysql-orm')
-
-//     Orm.Config.connect({
-//       host: Config.mysql.host,
-//       user: Config.mysql.user,
-//       password: Config.mysql.pswd,
-//       database: Config.mysql.base,
-//       port: Config.mysql.port,
-//       charset: Config.mysql.charset,
-//     })
-
-//     Orm.Config.modelsDir(Path.model)
-//     Orm.Config.queryLogDir(Path.file.log)
-//     Orm.Config.migrationsDir(Path.migration)
-
-//     Sigint.push(_closure => {
-//       const { DB } = require('@oawu/mysql-orm')
-//       DB.close()
-//       _Helper.print('關閉 MySQL 連線', 'ok')
-//       _closure()
-//     })
-
-//     _Helper.print('載入 MySQL', 'ok')
-//     next()
-//   })
-//   .enqueue(next => { // 資料庫版本
-//     const { Migrate } = require('@oawu/mysql-orm')
-
-//     const dog = Dog().bite((error, migrate) => {
-//       if (error instanceof Error) {
-//         return _Helper.print('確認 Migrate', 'err', error)
-//       }
-
-//       _Helper.print('確認 Migrate', 'ok', `版本：${migrate.version}`)
-//       next()
-//     })
-
-//     Migrate.version(null, dog.eat, false)
-//   })
-//   .enqueue(next => { // Model 檢查
-//     const { Model } = require('@oawu/mysql-orm')
-    
-//     if (!Model.BitbucketHook) {
-//       _Helper.print('確認 Model BitbucketHook', 'err')
-//       return
-//     }
-
-//     if (!Model.BitbucketHookHeader) {
-//       _Helper.print('確認 Model BitbucketHookHeader', 'err')
-//       return
-//     }
-
-//     if (!Model.BitbucketHookPayload) {
-//       _Helper.print('確認 Model BitbucketHookPayload', 'err')
-//       return
-//     }
-
-//     if (!Model.Deployment) {
-//       _Helper.print('確認 Model Deployment', 'err')
-//       return
-//     }
-
-//     if (!Model.DeploymentNotify) {
-//       _Helper.print('確認 Model DeploymentNotify', 'err')
-//       return
-//     }
-
-//     if (!Model.DeploymentCommand) {
-//       _Helper.print('確認 Model DeploymentCommand', 'err')
-//       return
-//     }
-
-//     next()
-//   })
-//   .enqueue(next => {
-//     let error = null
-
-//     let Route = null
-//     try {
-//       Route = require('@oawu/_Route')
-//       error = null
-//     } catch (e) {
-//       error = e
-//       Route = null
-//     }
-
-//     if (error) {
-//       return _Helper.print('載入 Router', 'err', error)
-//     }
-
-//     _Helper.print('載入 Router', 'ok')
-
-//     Route.cros.headers = [
-//       { key: 'Access-Control-Allow-Headers', val: 'Content-Type, Authorization, X-Requested-With' },
-//       { key: 'Access-Control-Allow-Methods', val: 'GET, POST, PUT, DELETE, OPTIONS' },
-//       { key: 'Access-Control-Allow-Origin',  val: '*' },
-//     ]
-
-//     const routers = _Helper.Fs.scanDirSync(Path.router)
-//       .filter(file => Path.$.extname(file) == '.js')
-    
-//     for (let router of routers) {
-//       try {
-//         require(router)
-//         error = null
-//       } catch (e) {
-//         error = e
-//       }
-      
-//       if (error) {
-//         return _Helper.print('載入 Routers', 'err', error)
-//       }
-//     }
-
-//     _Helper.print('載入 Routers', 'ok')
-
-//     const Http = require('http').Server()
-//     Http.on('error', error => _Helper.print('Http', 'err', error))
-//     Http.listen(Config.port, _ => {
-//       _Helper.print('開啟 Http', 'ok', `http://127.0.0.1:${Config.port}`)
-//       next(Http)
-//     })
-//     Http.on('request', Route.dispatch)
-//     Http.setTimeout(10 * 1000)
-//   })
-//   .enqueue((next, http) => {
-//     require(`${Path.lib}Socket.js`)
-//       .create(http, http => {
-//         _Helper.print('SOCKET', '啟動', 'ok')
-//         next(http)
-//       })
-//   })
-//   .enqueue((next, http) => {
-//     const Cron = require(`${Path.lib}CronBitbucketHook.js`)
-
-//     const { Model: { Deployment } } = require('@oawu/mysql-orm')
-
-//     Deployment.Enables(deployments => {
-//       const dog = Dog().bite(_ => {
-//         _Helper.print('排程', 'Bitbucket Hook', deployments.length, 'ok')
-//         _Helper.print(deployments.map(({ deployment: { title } }) => ` ↳ ${title}`).join('\n'))
-//         next()
-//       })
-
-//       Promise.all(deployments.map(({ deployment, notifies, commands }) => Cron(deployment, notifies, commands)))
-//         .then(dog.eat)
-//         .catch(dog.eat)
-//     })
-//   })

@@ -5,6 +5,3 @@
  * @link        https://www.ioa.tw/
  */
 
-const DeploymentCommand = function () { }
-
-module.exports = DeploymentCommand

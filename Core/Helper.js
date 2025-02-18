@@ -34,10 +34,48 @@ const exec = (command, option = { maxBuffer: 1024 }) => new Promise((resolve, re
   if (error) {
     return reject(`Error: ${error.message}`)
   }
-  resolve(stdout, stderr)
+  resolve({ stdout, stderr })
 }))
+
+const during = sec => {
+  const units = [], contitions = [
+    { base: 60, format: '秒' },
+    { base: 60, format: '分鐘' },
+    { base: 24, format: '小時' },
+    { base: 30, format: '天' },
+    { base: 12, format: '個月' }
+  ]
+  let now = parseInt(sec, 10)
+  let nowUnit = null
+
+  if (now <= 0) {
+    return '太快了…'
+  }
+
+  for (const i in contitions) {
+    nowUnit = now % contitions[i].base
+    if (nowUnit != 0) {
+      units.push(nowUnit + contitions[i].format)
+    }
+    now = Math.floor(now / contitions[i].base)
+    if (now < 1) {
+      break
+    }
+  }
+
+  if (now > 0) {
+    units.push(`${now} 年`)
+  }
+
+  if (units.length < 1) {
+    units.push(`${now} 秒`)
+  }
+
+  return units.reverse().join(' ')
+}
 
 module.exports = {
   syslog,
   exec,
+  during,
 }

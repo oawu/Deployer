@@ -5,6 +5,6 @@
  * @link        https://www.ioa.tw/
  */
 
-const BitbucketHookPayload = function() {}
+const BitbucketHookPayload = function () { }
 
 module.exports = BitbucketHookPayload

@@ -19,32 +19,33 @@ module.exports = {
       .default(0)
       .comment('Workflow ID')
 
-// ============
-
-    db.attr('percent').decimal(3, 2).unsigned()
-      .default(null)
-      .comment('進度百分比')
-
-    db.attr('output').text().collate('utf8mb4_unicode_ci')
+    db.attr('workflowLogId').int().unsigned()
       .notNull()
-      .comment('輸出')
+      .default(0)
+      .comment('Workflow Log ID')
 
 // ============
-
-    db.attr('funcName').varchar(190).collate('utf8mb4_unicode_ci')
-      .notNull()
-      .default('')
-      .comment('Function Name')
 
     db.attr('title').varchar(190).collate('utf8mb4_unicode_ci')
       .notNull()
       .default('')
       .comment('訊息')
 
+    db.attr('funcName').varchar(190).collate('utf8mb4_unicode_ci')
+      .notNull()
+      .default('')
+      .comment('Function Name')
+
     db.attr('cmd').varchar(190).collate('utf8mb4_unicode_ci')
       .notNull()
       .default('')
       .comment('指令')
+
+    db.attr('output').text().collate('utf8mb4_unicode_ci')
+      .notNull()
+      .comment('輸出')
+
+// ============
 
     db.attr('sTime').decimal(13, 3).unsigned()
       .default(null)

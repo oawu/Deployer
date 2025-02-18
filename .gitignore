@@ -1,7 +1,33 @@
 /node_modules/*
 /package-lock.json
 /npm-debug.log
-/.DS_Store
 /Config.js
 /sftp-config.json
 
+# IDE 和編輯器檔案
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 環境設定檔
+.env
+.env.local
+.env.*.local
+
+# 建置輸出
+/dist
+/build
+/out
+
+# 日誌檔案
+*.log
+logs/
+
+# 暫存檔案
+.tmp/
+temp/
+
+# 系統檔案
+Thumbs.db
+.DS_Store

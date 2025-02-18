@@ -5,15 +5,15 @@
  * @link        https://www.ioa.tw/
  */
 
-const URL        = require('url')
-const http       = require('http')
+const URL = require('url')
+const http = require('http')
 const FileSystem = require('fs')
-const uuid       = require('uuid')
+const uuid = require('uuid')
 
-const { Json, Type: T } = require('@oawu/helper') 
+const { Json, Type: T } = require('@oawu/helper')
 
-const Path       = require('@oawu/_Path')
-const { syslog }     = require('@oawu/_Helper')
+const Path = require('@oawu/_Path')
+const { syslog } = require('@oawu/_Helper')
 
 let _page404 = null
 let _crosHeaders = []
@@ -167,7 +167,7 @@ const _dispatch = (info, data) => {
     try {
       controller = require(info.file)
       error = null
-    } catch(e) {
+    } catch (e) {
       error = e
       controller = null
     }
@@ -190,7 +190,7 @@ const _parse = (method, pathname, url) => {
   // 找出 request 是符合哪個 router
   let router = null
   let params = null
-  
+
   const routers = ['get', 'post', 'put', 'delete', 'options'].includes(method)
     ? Router[method]
     : []
@@ -225,7 +225,7 @@ const dispatch = (request, response) => {
   const method = request.method.toLowerCase()
   const pathname = url.pathname.replace(/\/+/gm, '/').replace(/\/$|^\//gm, '')
   const { router, param, query } = _parse(method, pathname, url)
-  
+
   // 取得、整理 request body
   const _param = []
   request.on('data', chunk => _param.push(chunk))
@@ -237,7 +237,7 @@ const dispatch = (request, response) => {
     const data = {
       id,
       method,
-      get header () {
+      get header() {
         return this.request.headers
       },
       pathname,
@@ -268,7 +268,7 @@ const regxPattern = {
 }
 
 // Router
-const Router = function(method, segment = '') {
+const Router = function (method, segment = '') {
   if (!(this instanceof Router)) {
     return new Router(method, segment)
   }
@@ -302,18 +302,18 @@ const Router = function(method, segment = '') {
   }
 }
 
-Router.all     = new Map()
-Router.get     = new Map()
-Router.post    = new Map()
-Router.put     = new Map()
-Router.delete  = new Map()
+Router.all = new Map()
+Router.get = new Map()
+Router.post = new Map()
+Router.put = new Map()
+Router.delete = new Map()
 Router.options = new Map()
 
-Router.prototype.func = function(func) {
+Router.prototype.func = function (func) {
   this._info = _parseFunc(func)
   return this
 }
-Router.prototype.controller = function(name) {
+Router.prototype.controller = function (name) {
   this._info = _parseController(name)
   return this
 }
@@ -329,7 +329,7 @@ module.exports = {
     }
   },
   cros: {
-    set headers (headers) {
+    set headers(headers) {
       if (!Array.isArray(headers)) {
         return
       }
@@ -341,7 +341,7 @@ module.exports = {
 
       _crosHeaders = tmp
     },
-    get headers () {
+    get headers() {
       return _crosHeaders
     }
   },

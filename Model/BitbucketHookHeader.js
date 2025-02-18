@@ -5,6 +5,6 @@
  * @link        https://www.ioa.tw/
  */
 
-const BitbucketHookHeader = function() {}
+const BitbucketHookHeader = function () { }
 
 module.exports = BitbucketHookHeader

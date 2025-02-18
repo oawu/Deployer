@@ -8,8 +8,13 @@
 module.exports = {
   port: 8125,
 
-  webUrl: ``, // http://127.0.0.1:8125/hook/
-  socketUrl: ``, // http://127.0.0.1:8125/
+  bot: {
+    tokens: [
+    ],
+    chat: {
+    }
+  },
+
 
   mysql: {
     host: '127.0.0.1',

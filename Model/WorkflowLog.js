@@ -7,9 +7,9 @@
 
 const { Model } = require('@oawu/mysql-orm')
 
-const WorkflowLog = function() {}
+const WorkflowLog = function () { }
 
-WorkflowLog.prototype.saveWithTime = async function() {
+WorkflowLog.prototype.saveWithTime = async function () {
   this.eTime = Date.now() / 1000
   this.dTime = Math.max(this.eTime - this.sTime, 0)
   return await this.save()

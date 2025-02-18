@@ -5,12 +5,12 @@
  * @link        https://www.ioa.tw/
  */
 
-const Hashids   = require('hashids/cjs')
-const Config    = require('@oawu/_Config')
+const Hashids = require('hashids/cjs')
+const Config = require('@oawu/_Config')
 const { Type: T } = require('@oawu/helper')
 const hashids = new Hashids(T.str(Config.salt) ? Config.salt : '', 10, 'abcdefhijkmnprstuvwxyz2345678')
 
-const BitbucketHook = function() {}
+const BitbucketHook = function () { }
 
 BitbucketHook.encodeId = id => hashids.encode(id)
 BitbucketHook.decodeToken = token => {
