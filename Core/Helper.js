@@ -5,7 +5,6 @@
  * @link        https://www.ioa.tw/
  */
 
-const Exec = require('child_process').exec
 const { Argv, Type: T } = require('@oawu/helper')
 
 let isPm2 = null
@@ -30,12 +29,7 @@ const syslog = (...texts) => {
   return true
 }
 
-const exec = (command, option = { maxBuffer: 1024 }) => new Promise((resolve, reject) => Exec(command, option, (error, stdout, stderr) => {
-  if (error) {
-    return reject(`Error: ${error.message}`)
-  }
-  resolve({ stdout, stderr })
-}))
+
 
 const during = sec => {
   const units = [], contitions = [
@@ -74,8 +68,9 @@ const during = sec => {
   return units.reverse().join(' ')
 }
 
+
 module.exports = {
   syslog,
-  exec,
+
   during,
 }

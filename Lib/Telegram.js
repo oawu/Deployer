@@ -8,7 +8,7 @@
 const TelBot = require('node-telegram-bot-api')
 
 const Config = require('@oawu/_Config')
-const { Type: T, tryIgnore, Sigint } = require('@oawu/helper')
+const { Type: T, Sigint } = require('@oawu/helper')
 
 const _srcs = srcs => (T.arr(srcs) ? srcs : []).map(src => {
   if (!T.obj(src)) {
@@ -233,11 +233,11 @@ Telegram.Message.Status.prototype.update = async function (status, isIgnoreError
 
 // ==========
 
-Telegram.prototype.task = async function (level, title, func, ...params) {
+Telegram.prototype.task = async function (logger, level, title, func, ...params) {
   const message = Telegram.Message.Status(title, level)
   await this.push(message)
 
-  process.stdout.write(`${message}\n`)
+  logger(message)
 
   let result = null
 
@@ -264,7 +264,8 @@ Telegram.prototype.task = async function (level, title, func, ...params) {
   }
 
   await message.update(!(result === false || T.err(result)))
-  process.stdout.write(`${message}\n`)
+
+  logger(message)
 
   if (T.err(result)) {
     throw result

@@ -14,15 +14,20 @@ module.exports = {
       .autoIncrement()
       .comment('ID')
 
-    db.attr('bitbucketHookId').int().unsigned()
-      .notNull()
-      .default(0)
-      .comment('BitbucketHook ID')
-
     db.attr('workflowId').int().unsigned()
       .notNull()
       .default(0)
       .comment('Workflow ID')
+
+    // db.attr('bitbucketHookId').int().unsigned()
+    //   .notNull()
+    //   .default(0)
+    //   .comment('BitbucketHook ID')
+
+    // db.attr('cliTriggerId').int().unsigned()
+    //   .notNull()
+    //   .default(0)
+    //   .comment('CliTrigger ID')
 
 
 // ============

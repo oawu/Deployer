@@ -14,6 +14,8 @@ Router.get('').controller('Main@index')
 Router.get('hook').controller('Hook@show')
 Router.post('hook/bitbucket').controller('Bitbucket@index')
 
+Router.cli().controller('Main@cli')
+
 // Router.options('*').func((_, response) => {
 //   response.writeHead(204, Router.cros.headers)
 //   response.end()

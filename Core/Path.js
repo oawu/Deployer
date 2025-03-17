@@ -18,7 +18,12 @@ const asset = `${root}Asset${Path.sep}`
 // const webSocket  = root + 'WebSocket' + Path.sep
 
 const file = {
-  log: `${root}File${Path.sep}Log${Path.sep}`,
+  log: {
+    query: `${root}File${Path.sep}Log${Path.sep}Query${Path.sep}`,
+    server: `${root}File${Path.sep}Log${Path.sep}Server${Path.sep}`,
+    request: `${root}File${Path.sep}Log${Path.sep}Request${Path.sep}`,
+    cli: `${root}File${Path.sep}Log${Path.sep}Cli${Path.sep}`,
+  }
   //   tmp: root + 'File' + Path.sep + 'Tmp' + Path.sep,
 }
 

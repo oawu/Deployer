@@ -14,10 +14,10 @@ module.exports = {
       .autoIncrement()
       .comment('ID')
 
-    db.attr('token').varchar(40).collate('utf8mb4_unicode_ci')
+    db.attr('uid').varchar(36).collate('utf8mb4_unicode_ci')
       .notNull()
       .default('')
-      .comment('Token')
+      .comment('Request UUID ID')
 
     db.attr('fullname').varchar(100).collate('utf8mb4_unicode_ci')
       .notNull()
@@ -26,15 +26,15 @@ module.exports = {
 
 // ============
 
-    db.attr('deploymentId').int().unsigned()
-      .notNull()
-      .default(0)
-      .comment('Deployment ID')
+    // db.attr('deploymentId').int().unsigned()
+    //   .notNull()
+    //   .default(0)
+    //   .comment('Deployment ID')
 
-    db.attr('workflowId').int().unsigned()
-      .notNull()
-      .default(0)
-      .comment('Workflow ID')
+    // db.attr('workflowId').int().unsigned()
+    //   .notNull()
+    //   .default(0)
+    //   .comment('Workflow ID')
 
 // ============
 

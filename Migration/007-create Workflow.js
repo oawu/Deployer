@@ -7,41 +7,48 @@
 
 module.exports = {
   up (db) {
-    db = db.create('BitbucketHookLog', 'Bitbucket Hook Log')
+    db = db.create('Workflow', '部署流程')
 
     db.attr('id').int().unsigned()
       .notNull()
       .autoIncrement()
       .comment('ID')
 
+    db.attr('deploymentId').int().unsigned()
+      .notNull()
+      .default(0)
+      .comment('Deployment ID')
+
     db.attr('bitbucketHookId').int().unsigned()
       .notNull()
       .default(0)
-      .comment('Bitbucket Hook ID')
+      .comment('BitbucketHook ID')
+
+    db.attr('cliTriggerId').int().unsigned()
+      .notNull()
+      .default(0)
+      .comment('CliTrigger ID')
 
 // ============
-
-    db.attr('title').varchar(190).collate('utf8mb4_unicode_ci')
-      .notNull()
-      .default('')
-      .comment('標題')
-
-    db.attr('output').text().collate('utf8mb4_unicode_ci')
-      .notNull()
-      .comment('輸出')
 
     db.attr('status')
       .enum(...[
-        'ing',
-        'done',
-        'fail'
-      ])
-      .collate('utf8mb4_unicode_ci')
-      .default('ing')
+        'pending',
+        'running',
+        'failure',
+        'cancel',
+        'success',
+      ]).collate('utf8mb4_unicode_ci')
       .notNull()
+      .default('pending')
       .comment('狀態')
 
 // ============
+
+    db.attr('uid').varchar(36).collate('utf8mb4_unicode_ci')
+      .notNull()
+      .default('')
+      .comment('UUID')
 
     db.attr('sTime').decimal(13, 3).unsigned()
       .default(null)
@@ -55,6 +62,7 @@ module.exports = {
       .default(null)
       .comment('Duration unix time, 單位：秒')
 
+
 // ============
 
     db.attr('updateAt').datetime().notNull().default('CURRENT_TIMESTAMP').on('update', 'CURRENT_TIMESTAMP').comment('更新時間')
@@ -63,5 +71,5 @@ module.exports = {
     db.primaryKey('id')
     return db
   },
-  down: db => db.drop('BitbucketHookLog')
+  down: db => db.drop('Workflow')
 }
