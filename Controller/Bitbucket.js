@@ -213,9 +213,6 @@ const _parse = {
 
 module.exports = {
   async index(data) {
-    this.logger('aaaaaa')
-    return
-
     const _header = Json.encode(data.header)
     if (T.err(_header)) {
       throw new Error(`解析 Header 失敗(1)`, { cause: _header })
