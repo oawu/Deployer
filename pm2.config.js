@@ -15,7 +15,7 @@ module.exports = {
       script: 'Serve.js',
       args: '-PM2',
 
-      log_file: 'File/Log/Server.log',
+      log_file: 'File/Log/Pm2/Server.log',
       log_date_format: 'YYYY-MM-DD HH:mm:ss'
     }
   ]
