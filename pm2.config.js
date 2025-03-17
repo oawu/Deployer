@@ -12,7 +12,7 @@ module.exports = {
 
       max_memory_restart: '512M',
 
-      script: 'Serve.js',
+      script: 'Server.js',
       args: '-PM2',
 
       log_file: 'File/Log/Pm2/Server.log',
