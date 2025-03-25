@@ -7,7 +7,7 @@
 
 const fs = require('fs/promises')
 const Path = require('@oawu/_Path')
-const { date, Sigint, closureOrPromise } = require('@oawu/helper')
+const { date, Sigint, promisify } = require('@oawu/helper')
 
 const _Log = {
   _funcs: [],
@@ -40,7 +40,7 @@ const _Log = {
     }
   },
   finish (callback = null) {
-    return closureOrPromise(callback, done => this.execute(this._finish = done))
+    return promisify(callback, done => this.execute(this._finish = done))
   }
 }
 

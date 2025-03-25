@@ -8,7 +8,7 @@
 const fs = require('fs/promises')
 
 const Orm = require('@oawu/mysql-orm')
-const { Sigint, tryIgnore, Type: T } = require('@oawu/helper')
+const { Sigint, tryFunc, Type: T } = require('@oawu/helper')
 
 const Path = require('@oawu/_Path')
 const Config = require('@oawu/_Config')
@@ -41,7 +41,7 @@ const mySQL = async log => {
 const migrate = async log => {
   const { Migrate } = Orm
 
-  const { version } = await tryIgnore(Migrate.execute())
+  const { version } = await tryFunc(Migrate.execute())
 
   if (T.err(version)) {
     log('確認 Migrate', 'err')

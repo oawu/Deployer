@@ -18,11 +18,11 @@ module.exports = {
     output(`<h1>哎呀！</h1><article><p>嘿！孩子, 你想幹嘛呢？迷路了嗎？</p><b>：）</b>`, 500)
   },
   async cli() {
-    // const cli = await Orm.Model.CliTrigger.init(this.id, 'foot-print/php', 'prod')
+    const cli = await Orm.Model.CliTrigger.init(this.id, 'foot-print/php', 'prod')
 
-    // await Workflow({ cli }, (...texts) => {
-    //   syslog(...texts)
-    //   this.logger(...texts)
-    // })
+    await Workflow({ cli }, (...texts) => {
+      syslog(...texts)
+      this.logger(...texts)
+    })
   }
 }

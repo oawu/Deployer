@@ -6,7 +6,7 @@
  */
 
 const { Model } = require('@oawu/mysql-orm')
-const { tryIgnore, date, Type: T } = require('@oawu/helper')
+const { tryFunc, date, Type: T } = require('@oawu/helper')
 
 const Path = require('@oawu/_Path')
 const { during } = require('@oawu/_Helper')
@@ -86,7 +86,7 @@ Cancel.prototype._closeTelegram = async function () {
   })
 }
 Cancel.prototype.execute = async function () {
-  await tryIgnore(CheckPass(this._data, `取消`, 'cancel').checkEnable(this._checkEnable).execute(async log => {
+  await tryFunc(CheckPass(this._data, `取消`, 'cancel').checkEnable(this._checkEnable).execute(async log => {
     await this._updateStatus()
     await this._closeSSHConnect()
     await this._closeTelegram()

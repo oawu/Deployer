@@ -8,7 +8,7 @@
 const uuid = require('uuid')
 
 const { Model } = require('@oawu/mysql-orm')
-const { tryIgnore, date, Type: T } = require('@oawu/helper')
+const { tryFunc, date, Type: T } = require('@oawu/helper')
 
 const Path = require('@oawu/_Path')
 
@@ -88,7 +88,7 @@ const _telegram = async data => {
 const _reset = async (logger, trigger, deployment) => {
   deployment.workflowId = 0
 
-  const _workflows = await tryIgnore(Model.Workflow.where('deploymentId', deployment.id).select('id', 'status', 'sTime', 'eTime', 'dTime').all(), [])
+  const _workflows = await tryFunc(Model.Workflow.where('deploymentId', deployment.id).select('id', 'status', 'sTime', 'eTime', 'dTime').all(), [])
 
   const workflows = _workflows
     .reduce((a, b) => a.concat(b), [])
