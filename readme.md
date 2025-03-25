@@ -1,8 +1,15 @@
 # OA's Deployer 工具
 
-* clone
-* npm i
-* 設定 Config.js
+一個可以自動部署的工具，部署過程可以同步至 [Telegram](https://telegram.org/)，如下影片：
+
+[![Demo 影片](https://img.youtube.com/vi/bBBbD8d72LE/0.jpg)](https://www.youtube.com/watch?v=bBBbD8d72LE)
+[觀看示範影片](https://www.youtube.com/watch?v=bBBbD8d72LE)
+
+
+## 步驟
+* `git clone`
+* `npm i`
+* 設定 `Config.js`
 * DB 新增 Deployment 功能
 
 ## 啟動
